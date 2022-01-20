@@ -22,7 +22,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-18T19:07:12.011660-03:00[America/Sao_Paulo]")
 @Api(value = "orders", description = "the orders API")
 public interface OrdersApi {
 
