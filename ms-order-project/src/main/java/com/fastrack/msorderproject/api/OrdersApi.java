@@ -5,25 +5,23 @@
  */
 package com.fastrack.msorderproject.api;
 
-import com.fastrack.msorderproject.models.ExceptionResponse;
-import com.fastrack.msorderproject.models.OrderDto;
-import io.swagger.annotations.*;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.CookieValue;
 
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
+import com.fastrack.msorderproject.dto.ExceptionResponse;
+import com.fastrack.msorderproject.dto.OrderDto;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-18T19:07:12.011660-03:00[America/Sao_Paulo]")
 @Api(value = "orders", description = "the orders API")
 public interface OrdersApi {
@@ -39,7 +37,7 @@ public interface OrdersApi {
         produces = { "*/*" }, 
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity<Void> createUsingPOST(@ApiParam(value = "dto" ,required=true )  @Valid @RequestBody OrderDto body
+    ResponseEntity<Void> createUsingPOST(@ApiParam(value = "dto" ,required=true )  @RequestBody OrderDto body
 );
 
 
@@ -91,10 +89,10 @@ public interface OrdersApi {
     @RequestMapping(value = "/orders/search",
         produces = { "*/*" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<OrderDto>> searchUsingGET(@ApiParam(value = "") @Valid @RequestParam(value = "max_total", required = false) String maxTotal
-,@ApiParam(value = "") @Valid @RequestParam(value = "min_total", required = false) String minTotal
-,@ApiParam(value = "") @Valid @RequestParam(value = "status", required = false) String status
-,@ApiParam(value = "") @Valid @RequestParam(value = "q", required = false) String q
+    ResponseEntity<List<OrderDto>> searchUsingGET(@ApiParam(value = "")  @RequestParam(value = "max_total", required = false) String maxTotal
+,@ApiParam(value = "") @RequestParam(value = "min_total", required = false) String minTotal
+,@ApiParam(value = "") @RequestParam(value = "status", required = false) String status
+,@ApiParam(value = "") @RequestParam(value = "q", required = false) String q
 );
 
 
@@ -110,7 +108,7 @@ public interface OrdersApi {
         produces = { "*/*" }, 
         consumes = { "application/json" },
         method = RequestMethod.PUT)
-    ResponseEntity<OrderDto> updateUsingPUT(@ApiParam(value = "dto" ,required=true )  @Valid @RequestBody OrderDto body
+    ResponseEntity<OrderDto> updateUsingPUT(@ApiParam(value = "dto" ,required=true )  @RequestBody OrderDto body
 ,@ApiParam(value = "id",required=true) @PathVariable("id") Long id
 );
 

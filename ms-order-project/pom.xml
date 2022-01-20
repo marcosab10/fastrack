@@ -68,12 +68,6 @@
 			<artifactId>modelmapper</artifactId>
 			<version>2.3.8</version>
 		</dependency>
-
-		<dependency>
-			<groupId>io.swagger</groupId>
-			<artifactId>swagger-codegen-maven-plugin</artifactId>
-			<version>2.4.25</version>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -90,29 +84,6 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			<plugin>
-                <groupId>io.swagger.codegen.v3</groupId>
-                <artifactId>swagger-codegen-maven-plugin</artifactId>
-                <version>3.0.18</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/swagger.yaml</inputSpec>
-                            <language>spring</language>
-                            <output>${project.basedir}</output>
-                            <generateSupportingFiles>false</generateSupportingFiles>
-                            <apiPackage>com.fastrack.msorderproject.api</apiPackage>
-                            <modelPackage>com.fastrack.msorderproject.models</modelPackage>
-                            <configOptions>
-                                <interfaceOnly>true</interfaceOnly>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 		</plugins>
 	</build>
 

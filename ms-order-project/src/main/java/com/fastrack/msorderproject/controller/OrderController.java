@@ -2,19 +2,18 @@ package com.fastrack.msorderproject.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fastrack.msorderproject.api.OrdersApi;
-import com.fastrack.msorderproject.models.OrderDto;
+import com.fastrack.msorderproject.dto.OrderDto;
 
 @RestController
 public class OrderController implements OrdersApi{
 
 	@Override
-	public ResponseEntity<Void> createUsingPOST(@Valid OrderDto body) {
+	public ResponseEntity<Void> createUsingPOST(OrderDto body) {
 		System.out.println("createUsingPOST");
 		return null;
 	}
@@ -41,15 +40,15 @@ public class OrderController implements OrdersApi{
 	}
 
 	@Override
-	public ResponseEntity<List<OrderDto>> searchUsingGET(@Valid String maxTotal, @Valid String minTotal,
-			@Valid String status, @Valid String q) {
+	public ResponseEntity<List<OrderDto>> searchUsingGET(String maxTotal, String minTotal,
+		 String status, String q) {
 		// TODO Auto-generated method stub
 		System.out.println("searchUsingGET");
 		return null;
 	}
 
 	@Override
-	public ResponseEntity<OrderDto> updateUsingPUT(@Valid OrderDto body, Long id) {
+	public ResponseEntity<OrderDto> updateUsingPUT(OrderDto body, Long id) {
 		// TODO Auto-generated method stub
 		System.out.println("updateUsingPUT");
 		return null;

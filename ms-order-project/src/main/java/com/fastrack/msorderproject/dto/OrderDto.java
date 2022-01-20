@@ -1,20 +1,18 @@
-package com.fastrack.msorderproject.models;
+package com.fastrack.msorderproject.dto;
 
 import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fastrack.msorderproject.models.StatusEnum;
+
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * OrderDto
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-01-18T19:07:12.011660-03:00[America/Sao_Paulo]")
 public class OrderDto   {
   @JsonProperty("description")
   private String description = null;
@@ -31,33 +29,7 @@ public class OrderDto   {
   /**
    * Gets or Sets status
    */
-  public enum StatusEnum {
-    NOT_PROCESSED("NOT_PROCESSED"),
-    
-    PROCESSED("PROCESSED");
 
-    private String value;
-
-    StatusEnum(String value) {
-      this.value = value;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static StatusEnum fromValue(String text) {
-      for (StatusEnum b : StatusEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
   @JsonProperty("status")
   private StatusEnum status = null;
 
