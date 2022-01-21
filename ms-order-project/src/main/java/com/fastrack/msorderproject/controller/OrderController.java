@@ -2,15 +2,24 @@ package com.fastrack.msorderproject.controller;
 
 import java.util.List;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fastrack.msorderproject.api.OrdersApi;
 import com.fastrack.msorderproject.dto.OrderDto;
+import com.fastrack.msorderproject.models.Orders;
+import com.fastrack.msorderproject.repository.OrderRepository;
 
 @RestController
 public class OrderController implements OrdersApi{
+	
+	private static final String CONTENT_TYPE = "Content-Type";
+	private static final String APPLICATION_JSON = "application/json";
+	
+	
+	@Autowired
+	private OrderRepository orderRepository;
 
 	@Override
 	public ResponseEntity<Void> createUsingPOST(OrderDto body) {
@@ -34,9 +43,10 @@ public class OrderController implements OrdersApi{
 
 	@Override
 	public ResponseEntity<List<OrderDto>> listUsingGET() {
-		// TODO Auto-generated method stub
-		System.out.println("listUsingGET");
-		return null;
+		List<Orders> orders =  orderRepository.findAll();
+		List<OrderDto> ordersDto = OrderDto.converter(orders);
+		
+		return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(ordersDto);
 	}
 
 	@Override

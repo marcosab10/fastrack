@@ -29,6 +29,9 @@ public class Orders{
 	@Enumerated(EnumType.STRING)
 	private StatusEnum status;
 	
+	public Orders() {
+	}
+	
 	public Orders(String name, double total, StatusEnum status, String description) {
 		this.name = name;
 		this.total = total;
