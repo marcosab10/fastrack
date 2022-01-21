@@ -1,6 +1,9 @@
 package com.fastrack.msorderproject.dto;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.validation.annotation.Validated;
 
@@ -190,5 +193,10 @@ public class OrderDto   {
 	status = StatusEnum.NOT_PROCESSED;
 	
 	return new Orders(name, total, status, description);
+  }
+  
+  public static List<OrderDto> converter(List<Orders> orders) {
+		
+	return orders.stream().map(OrderDto::new).collect(Collectors.toList());
   }
 }

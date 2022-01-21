@@ -6,5 +6,6 @@ create table if not exists orders (
   name varchar(150) not null,
   status varchar(50)not null,
   total double not null,
+  description varchar(150) not null,
   primary key (id))
 ;
