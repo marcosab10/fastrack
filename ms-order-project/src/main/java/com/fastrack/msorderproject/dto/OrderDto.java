@@ -5,14 +5,17 @@ import java.util.Objects;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fastrack.msorderproject.models.Orders;
 import com.fastrack.msorderproject.models.StatusEnum;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 
 /**
  * OrderDto
  */
 @Validated
+@Builder
 public class OrderDto   {
   @JsonProperty("description")
   private String description = null;
@@ -26,12 +29,19 @@ public class OrderDto   {
   @JsonProperty("total")
   private Double total = null;
 
-  /**
-   * Gets or Sets status
-   */
-
   @JsonProperty("status")
   private StatusEnum status = null;
+  
+  
+  public OrderDto(Orders ordem) {
+		this.id = ordem.getId();
+		this.name = ordem.getName();
+		this.total = ordem.getTotal();
+		this.status = ordem.getStatus();
+		this.description = ordem.getDescription();
+				
+	}
+  
 
   public OrderDto description(String description) {
     this.description = description;
@@ -173,5 +183,12 @@ public class OrderDto   {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
+  }
+  
+  public Orders converter() {
+		
+	status = StatusEnum.NOT_PROCESSED;
+	
+	return new Orders(name, total, status, description);
   }
 }
