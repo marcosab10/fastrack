@@ -14,6 +14,8 @@ import com.fastrack.msorderproject.repository.OrderRepository;
 @RestController
 public class OrderController implements OrdersApi{
 	
+	private static final String UTF_8 = "utf-8";
+	private static final String DATA_ENCODING = "DataEncoding";
 	private static final String CONTENT_TYPE = "Content-Type";
 	private static final String APPLICATION_JSON = "application/json";
 	
@@ -23,22 +25,25 @@ public class OrderController implements OrdersApi{
 
 	@Override
 	public ResponseEntity<Void> createUsingPOST(OrderDto body) {
-		System.out.println("createUsingPOST");
-		return null;
+		Orders order = new Orders(body.getDescription(), body.getId(), body.getName(), body.getTotal(), body.getStatus());
+		orderRepository.save(order);
+		
+		return ResponseEntity.ok().build();
 	}
 
 	@Override
 	public ResponseEntity<OrderDto> deleteUsingDELETE(Long id) {
-		// TODO Auto-generated method stub
-		System.out.println("deleteUsingDELETE");
-		return null;
+		Orders order = orderRepository.getById(id);
+		orderRepository.delete(order);
+		return ResponseEntity.ok().build();
 	}
 
 	@Override
 	public ResponseEntity<OrderDto> findByIdUsingGET(Long id) {
-		// TODO Auto-generated method stub
-		System.out.println("findByIdUsingGET");
-		return null;
+		Orders order = orderRepository.getById(id);
+		OrderDto orderDto = new OrderDto(order);
+		
+		return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(orderDto);
 	}
 
 	@Override
@@ -50,18 +55,40 @@ public class OrderController implements OrdersApi{
 	}
 
 	@Override
+	public ResponseEntity<OrderDto> updateUsingPUT(OrderDto body, Long id) {		
+		if(orderRepository.existsById(id)) {
+			Orders order = orderRepository.getById(id);
+			if(order.getDescription() != order.getDescription()) {
+				order.setDescription(body.getDescription());
+			}
+			if(order.getName() != order.getName()) {
+				order.setName(body.getName());
+			}
+			if(order.getTotal() != order.getTotal()) {
+				order.setTotal(body.getTotal());
+			}
+			if(order.getStatus().toString() != body.getStatus().toString()) {
+				order.setStatus(body.getStatus());
+			}
+			
+			orderRepository.save(order);
+			
+			OrderDto orderDto = new OrderDto(order);
+			return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(orderDto);
+		}
+		else {
+			return ResponseEntity.notFound().build();
+		}
+	}
+	
+	@Override
 	public ResponseEntity<List<OrderDto>> searchUsingGET(String maxTotal, String minTotal,
 		 String status, String q) {
-		// TODO Auto-generated method stub
-		System.out.println("searchUsingGET");
-		return null;
-	}
-
-	@Override
-	public ResponseEntity<OrderDto> updateUsingPUT(OrderDto body, Long id) {
-		// TODO Auto-generated method stub
-		System.out.println("updateUsingPUT");
-		return null;
+		List<Orders> orders = orderRepository.findFilters(q, Double.parseDouble(minTotal), Double.parseDouble(maxTotal));
+		List<OrderDto> ordersDto = OrderDto.converter(orders);
+		
+		return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(ordersDto);
+		
 	}
 
 	

@@ -17,20 +17,6 @@ import com.fastrack.msorderproject.repository.OrderRepository;
 @Service
 public class OrderService {
 	
-	@Autowired
-	private OrderRepository orderRepository;
-	
-
-	public ResponseEntity<OrderDto> save(@RequestBody @Validated OrderDto orderDto, UriComponentsBuilder uriBuilder) {
-		Orders ordem = orderDto.converter();
-		orderRepository.save(ordem);
-		URI uri = uriBuilder.path("/listaOrdens/{id}").buildAndExpand(ordem.getId()).toUri();
-		
-		//orderProducer.send(orderIn);
-		
-		
-		return ResponseEntity.created(uri).body(new OrderDto(ordem));
-	}
 	
 
 }

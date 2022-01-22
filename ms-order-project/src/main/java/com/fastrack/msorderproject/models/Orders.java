@@ -32,7 +32,7 @@ public class Orders{
 	public Orders() {
 	}
 	
-	public Orders(String name, double total, StatusEnum status, String description) {
+	public Orders(String description, Long id, String name, double total, StatusEnum status) {
 		this.name = name;
 		this.total = total;
 		this.status = status;

@@ -34,6 +34,8 @@ public class OrderDto   {
   @JsonProperty("status")
   private StatusEnum status = null;
   
+  public OrderDto() {
+  }
   
   public OrderDto(Orders ordem) {
 		this.id = ordem.getId();
@@ -185,13 +187,6 @@ public class OrderDto   {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
-  }
-  
-  public Orders converter() {
-		
-	status = StatusEnum.NOT_PROCESSED;
-	
-	return new Orders(name, total, status, description);
   }
   
   public static List<OrderDto> converter(List<Orders> orders) {
