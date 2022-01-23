@@ -12,6 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fastrack.msorderproject.api.OrdersApi;
 import com.fastrack.msorderproject.dto.OrderDto;
 import com.fastrack.msorderproject.models.Orders;
+import com.fastrack.msorderproject.producer.OrderProducer;
 import com.fastrack.msorderproject.repository.OrderRepository;
 import com.fastrack.msorderproject.validation.ValidatedParametersException;
 
@@ -21,18 +22,23 @@ public class OrderController implements OrdersApi{
 	private static final String CONTENT_TYPE = "Content-Type";
 	private static final String APPLICATION_JSON = "application/json";
 	
-	
 	@Autowired
 	private OrderRepository orderRepository;
 
+	@Autowired
+	private OrderProducer orderProducer;
+	
 	@Override
 	public ResponseEntity<OrderDto> createUsingPOST(@Validated OrderDto body, UriComponentsBuilder uriBuilder) {
 		Orders order = new Orders(body.getDescription(), body.getId(), body.getName(), body.getTotal(), body.getStatus());
 		orderRepository.save(order);
 		
-		URI uri = uriBuilder.path("/orders/{id}").buildAndExpand(order.getId()).toUri();
+		OrderDto orderDto = new OrderDto(order);
 		
-		return ResponseEntity.created(uri).header(CONTENT_TYPE, APPLICATION_JSON).body(new OrderDto(order));
+		orderProducer.send(orderDto);
+		
+		URI uri = uriBuilder.path("/orders/{id}").buildAndExpand(order.getId()).toUri();
+		return ResponseEntity.created(uri).header(CONTENT_TYPE, APPLICATION_JSON).body(orderDto);
 	}
 
 	@Override
