@@ -13,12 +13,11 @@ import com.fastrack.msorderproject.api.OrdersApi;
 import com.fastrack.msorderproject.dto.OrderDto;
 import com.fastrack.msorderproject.models.Orders;
 import com.fastrack.msorderproject.repository.OrderRepository;
+import com.fastrack.msorderproject.validation.ValidatedParametersException;
 
 @RestController
 public class OrderController implements OrdersApi{
 	
-	private static final String UTF_8 = "utf-8";
-	private static final String DATA_ENCODING = "DataEncoding";
 	private static final String CONTENT_TYPE = "Content-Type";
 	private static final String APPLICATION_JSON = "application/json";
 	
@@ -99,7 +98,7 @@ public class OrderController implements OrdersApi{
 	
 	@Override
 	public ResponseEntity<List<OrderDto>> searchUsingGET(String maxTotal, String minTotal,
-		 String status, String q) {
+		 String status, String q)  throws ValidatedParametersException {
 		List<Orders> orders = orderRepository.findFilters(q, Double.parseDouble(minTotal), Double.parseDouble(maxTotal));
 		List<OrderDto> ordersDto = OrderDto.converter(orders);
 		
