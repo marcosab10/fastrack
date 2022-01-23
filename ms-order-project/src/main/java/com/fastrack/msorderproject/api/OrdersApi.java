@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fastrack.msorderproject.dto.ExceptionResponse;
 import com.fastrack.msorderproject.dto.OrderDto;
@@ -25,7 +26,7 @@ import io.swagger.annotations.ApiResponses;
 @Api(value = "orders", description = "the orders API")
 public interface OrdersApi {
 
-    @ApiOperation(value = "create", nickname = "createUsingPOST", notes = "", tags={ "order-rest", })
+    @ApiOperation(value = "create", nickname = "createUsingPOST", notes = "", response = OrderDto.class, tags={ "order-rest", })
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 201, message = "Created", response = OrderDto.class),
@@ -36,7 +37,7 @@ public interface OrdersApi {
         produces = { "*/*" }, 
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity<Void> createUsingPOST(@ApiParam(value = "dto" ,required=true )  @RequestBody OrderDto body
+    ResponseEntity<OrderDto> createUsingPOST(@ApiParam(value = "dto" ,required=true )  @RequestBody OrderDto body, UriComponentsBuilder uriBuilder
 );
 
 
@@ -110,5 +111,6 @@ public interface OrdersApi {
     ResponseEntity<OrderDto> updateUsingPUT(@ApiParam(value = "dto" ,required=true )  @RequestBody OrderDto body
 ,@ApiParam(value = "id",required=true) @PathVariable("id") Long id
 );
+
 
 }

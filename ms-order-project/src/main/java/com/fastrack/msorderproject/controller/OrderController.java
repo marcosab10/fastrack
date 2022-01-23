@@ -1,10 +1,12 @@
 package com.fastrack.msorderproject.controller;
 
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fastrack.msorderproject.api.OrdersApi;
 import com.fastrack.msorderproject.dto.OrderDto;
@@ -24,11 +26,13 @@ public class OrderController implements OrdersApi{
 	private OrderRepository orderRepository;
 
 	@Override
-	public ResponseEntity<Void> createUsingPOST(OrderDto body) {
+	public ResponseEntity<OrderDto> createUsingPOST(OrderDto body, UriComponentsBuilder uriBuilder) {
 		Orders order = new Orders(body.getDescription(), body.getId(), body.getName(), body.getTotal(), body.getStatus());
 		orderRepository.save(order);
 		
-		return ResponseEntity.ok().build();
+		URI uri = uriBuilder.path("/orders/{id}").buildAndExpand(order.getId()).toUri();
+		
+		return ResponseEntity.created(uri).body(new OrderDto(order));
 	}
 
 	@Override
