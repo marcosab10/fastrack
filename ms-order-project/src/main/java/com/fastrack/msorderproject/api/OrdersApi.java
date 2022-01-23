@@ -8,6 +8,7 @@ package com.fastrack.msorderproject.api;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +38,7 @@ public interface OrdersApi {
         produces = { "*/*" }, 
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity<OrderDto> createUsingPOST(@ApiParam(value = "dto" ,required=true )  @RequestBody OrderDto body, UriComponentsBuilder uriBuilder
+    ResponseEntity<OrderDto> createUsingPOST(@ApiParam(value = "dto" ,required=true )  @RequestBody @Validated OrderDto body, UriComponentsBuilder uriBuilder
 );
 
 
@@ -50,7 +51,7 @@ public interface OrdersApi {
     @RequestMapping(value = "/orders/{id}",
         produces = { "*/*" }, 
         method = RequestMethod.DELETE)
-    ResponseEntity<OrderDto> deleteUsingDELETE(@ApiParam(value = "id",required=true) @PathVariable("id") Long id
+    ResponseEntity<OrderDto> deleteUsingDELETE(@ApiParam(value = "id",required=true) @PathVariable("id") Long id, UriComponentsBuilder uriBuilder
 );
 
 
@@ -108,7 +109,7 @@ public interface OrdersApi {
         produces = { "*/*" }, 
         consumes = { "application/json" },
         method = RequestMethod.PUT)
-    ResponseEntity<OrderDto> updateUsingPUT(@ApiParam(value = "dto" ,required=true )  @RequestBody OrderDto body
+    ResponseEntity<OrderDto> updateUsingPUT(@ApiParam(value = "dto" ,required=true )  @RequestBody @Validated OrderDto body
 ,@ApiParam(value = "id",required=true) @PathVariable("id") Long id
 );
 

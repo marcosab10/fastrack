@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -26,28 +27,39 @@ public class OrderController implements OrdersApi{
 	private OrderRepository orderRepository;
 
 	@Override
-	public ResponseEntity<OrderDto> createUsingPOST(OrderDto body, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<OrderDto> createUsingPOST(@Validated OrderDto body, UriComponentsBuilder uriBuilder) {
 		Orders order = new Orders(body.getDescription(), body.getId(), body.getName(), body.getTotal(), body.getStatus());
 		orderRepository.save(order);
 		
 		URI uri = uriBuilder.path("/orders/{id}").buildAndExpand(order.getId()).toUri();
 		
-		return ResponseEntity.created(uri).body(new OrderDto(order));
+		return ResponseEntity.created(uri).header(CONTENT_TYPE, APPLICATION_JSON).body(new OrderDto(order));
 	}
 
 	@Override
-	public ResponseEntity<OrderDto> deleteUsingDELETE(Long id) {
-		Orders order = orderRepository.getById(id);
-		orderRepository.delete(order);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<OrderDto> deleteUsingDELETE(Long id, UriComponentsBuilder uriBuilder) {
+		if(orderRepository.existsById(id)) {
+			Orders order = orderRepository.getById(id);
+			orderRepository.delete(order);
+			OrderDto orderDto = new OrderDto(order);	
+			return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(orderDto);
+		}
+		else {
+			return ResponseEntity.notFound().build();
+		}
+		
 	}
 
 	@Override
 	public ResponseEntity<OrderDto> findByIdUsingGET(Long id) {
-		Orders order = orderRepository.getById(id);
-		OrderDto orderDto = new OrderDto(order);
-		
-		return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(orderDto);
+		if(orderRepository.existsById(id)) {
+			Orders order = orderRepository.getById(id);
+			OrderDto orderDto = new OrderDto(order);	
+			return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(orderDto);
+		}
+		else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 
 	@Override
@@ -59,16 +71,16 @@ public class OrderController implements OrdersApi{
 	}
 
 	@Override
-	public ResponseEntity<OrderDto> updateUsingPUT(OrderDto body, Long id) {		
+	public ResponseEntity<OrderDto> updateUsingPUT(@Validated OrderDto body, Long id) {		
 		if(orderRepository.existsById(id)) {
 			Orders order = orderRepository.getById(id);
-			if(order.getDescription() != order.getDescription()) {
+			if(order.getDescription() != body.getDescription()) {
 				order.setDescription(body.getDescription());
 			}
-			if(order.getName() != order.getName()) {
+			if(order.getName() != body.getName()) {
 				order.setName(body.getName());
 			}
-			if(order.getTotal() != order.getTotal()) {
+			if(order.getTotal() != body.getTotal()) {
 				order.setTotal(body.getTotal());
 			}
 			if(order.getStatus().toString() != body.getStatus().toString()) {

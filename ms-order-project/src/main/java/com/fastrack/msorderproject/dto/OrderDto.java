@@ -12,6 +12,7 @@ import com.fastrack.msorderproject.models.StatusEnum;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
+import lombok.NonNull;
 
 /**
  * OrderDto
@@ -20,15 +21,18 @@ import lombok.Builder;
 @Builder
 public class OrderDto   {
   @JsonProperty("description")
+  @NonNull
   private String description = null;
 
   @JsonProperty("id")
   private Long id = null;
 
   @JsonProperty("name")
+  @NonNull
   private String name = null;
 
   @JsonProperty("total")
+  @NonNull
   private Double total = null;
 
   @JsonProperty("status")
