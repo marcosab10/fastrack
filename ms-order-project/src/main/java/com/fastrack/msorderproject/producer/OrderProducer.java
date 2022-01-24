@@ -24,11 +24,9 @@ public class OrderProducer {
   }
 
   public void send(OrderDto orderDTO) {
-	  System.out.println("============= INICIO Template Topic =========== "+topic);
 	  kafkaTemplate.send(topic, orderDTO).addCallback(
 			   sucess -> logger.info("Mensagem Enviada" + sucess.getProducerRecord().value()),
 			   failure -> logger.info("Mensagem Falhou" + failure.getMessage()));
 	  
-	  System.out.println("============= FIM Template ===========");
   }
 }
