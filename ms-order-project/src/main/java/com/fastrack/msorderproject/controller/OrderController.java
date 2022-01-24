@@ -85,19 +85,11 @@ public class OrderController implements OrdersApi{
 	public ResponseEntity<OrderDto> updateUsingPUT(@Validated OrderDto body, Long id) {		
 		Optional<Orders> order = orderRepository.findById(id);
 		if(order.isPresent()) {
-			if(order.get().getDescription() != body.getDescription()) {
-				order.get().setDescription(body.getDescription());
-			}
-			if(order.get().getName() != body.getName()) {
-				order.get().setName(body.getName());
-			}
-			if(order.get().getTotal() != body.getTotal()) {
-				order.get().setTotal(body.getTotal());
-			}
-			if(order.get().getStatus().toString() != body.getStatus().toString()) {
-				order.get().setStatus(body.getStatus());
-			}
-			
+			order.get().setDescription(body.getDescription());
+			order.get().setName(body.getName());
+			order.get().setTotal(body.getTotal());
+			order.get().setStatus(body.getStatus());
+		
 			OrderDto orderDto = new OrderDto(order.get());
 			return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(orderDto);
 		}

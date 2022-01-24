@@ -4,6 +4,10 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### 
+!**/src/main/docker/**/data/
+
+
 ### STS ###
 .apt_generated
 .classpath
@@ -23,6 +27,7 @@ target/
 /nbproject/private/
 /nbbuild/
 /dist/
+/docker/
 /nbdist/
 /.nb-gradle/
 build/

@@ -25,8 +25,8 @@ public class OrderProducer {
 
   public void send(OrderDto orderDTO) {
 	  kafkaTemplate.send(topic, orderDTO).addCallback(
-			   sucess -> logger.info("Mensagem Enviada" + sucess.getProducerRecord().value()),
-			   failure -> logger.info("Mensagem Falhou" + failure.getMessage()));
+			   sucess -> logger.info("Message Sended" + sucess.getProducerRecord().value()),
+			   failure -> logger.info("Message Failed" + failure.getMessage()));
 	  
   }
 }

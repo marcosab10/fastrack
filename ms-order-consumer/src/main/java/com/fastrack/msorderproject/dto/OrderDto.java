@@ -11,6 +11,7 @@ import com.fastrack.msorderproject.models.Orders;
 import com.fastrack.msorderproject.models.StatusEnum;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -19,6 +20,7 @@ import lombok.NonNull;
  * OrderDto
  */
 @Validated
+@AllArgsConstructor
 @Builder
 @Data
 public class OrderDto   {
