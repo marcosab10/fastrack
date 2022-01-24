@@ -23,9 +23,9 @@ public class OrderProducer {
 	  this.kafkaTemplate = kafkaTemplate;
   }
 
-  public void send(OrderDto ordernsDTO) {
+  public void send(OrderDto orderDTO) {
 	  System.out.println("============= INICIO Template Topic =========== "+topic);
-	  kafkaTemplate.send(topic, ordernsDTO).addCallback(
+	  kafkaTemplate.send(topic, orderDTO).addCallback(
 			   sucess -> logger.info("Mensagem Enviada" + sucess.getProducerRecord().value()),
 			   failure -> logger.info("Mensagem Falhou" + failure.getMessage()));
 	  
