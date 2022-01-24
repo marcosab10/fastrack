@@ -2,6 +2,9 @@ package com.fastrack.msorderproject.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +32,7 @@ public class OrderController implements OrdersApi{
 	private OrderProducer orderProducer;
 	
 	@Override
+	@Transactional
 	public ResponseEntity<OrderDto> createUsingPOST(@Validated OrderDto body, UriComponentsBuilder uriBuilder) {
 		Orders order = new Orders(body.getDescription(), body.getId(), body.getName(), body.getTotal(), body.getStatus());
 		orderRepository.save(order);
@@ -42,11 +46,12 @@ public class OrderController implements OrdersApi{
 	}
 
 	@Override
+	@Transactional
 	public ResponseEntity<OrderDto> deleteUsingDELETE(Long id, UriComponentsBuilder uriBuilder) {
-		if(orderRepository.existsById(id)) {
-			Orders order = orderRepository.getById(id);
-			orderRepository.delete(order);
-			OrderDto orderDto = new OrderDto(order);	
+		Optional<Orders> order = orderRepository.findById(id);
+		if(order.isPresent()) {
+			orderRepository.delete(order.get());
+			OrderDto orderDto = new OrderDto(order.get());	
 			return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(orderDto);
 		}
 		else {
@@ -57,9 +62,9 @@ public class OrderController implements OrdersApi{
 
 	@Override
 	public ResponseEntity<OrderDto> findByIdUsingGET(Long id) {
-		if(orderRepository.existsById(id)) {
-			Orders order = orderRepository.getById(id);
-			OrderDto orderDto = new OrderDto(order);	
+		Optional<Orders> order = orderRepository.findById(id);
+		if(order.isPresent()) {
+			OrderDto orderDto = new OrderDto(order.get());	
 			return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(orderDto);
 		}
 		else {
@@ -76,25 +81,24 @@ public class OrderController implements OrdersApi{
 	}
 
 	@Override
+	@Transactional
 	public ResponseEntity<OrderDto> updateUsingPUT(@Validated OrderDto body, Long id) {		
-		if(orderRepository.existsById(id)) {
-			Orders order = orderRepository.getById(id);
-			if(order.getDescription() != body.getDescription()) {
-				order.setDescription(body.getDescription());
+		Optional<Orders> order = orderRepository.findById(id);
+		if(order.isPresent()) {
+			if(order.get().getDescription() != body.getDescription()) {
+				order.get().setDescription(body.getDescription());
 			}
-			if(order.getName() != body.getName()) {
-				order.setName(body.getName());
+			if(order.get().getName() != body.getName()) {
+				order.get().setName(body.getName());
 			}
-			if(order.getTotal() != body.getTotal()) {
-				order.setTotal(body.getTotal());
+			if(order.get().getTotal() != body.getTotal()) {
+				order.get().setTotal(body.getTotal());
 			}
-			if(order.getStatus().toString() != body.getStatus().toString()) {
-				order.setStatus(body.getStatus());
+			if(order.get().getStatus().toString() != body.getStatus().toString()) {
+				order.get().setStatus(body.getStatus());
 			}
 			
-			orderRepository.save(order);
-			
-			OrderDto orderDto = new OrderDto(order);
+			OrderDto orderDto = new OrderDto(order.get());
 			return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(orderDto);
 		}
 		else {
