@@ -41,7 +41,7 @@ public class OrderController implements OrdersApi{
 		try {
 			orderRepository.save(order);
 		} catch (Exception e) {
-			throw new ValidatedParametersException(body,  Double.class, "Order", null, e.getCause());
+			throw new ValidatedParametersException(body,  Orders.class, "Order", null, e.getCause());
 		}
 		
 		orderProducer.send(orderDto);
