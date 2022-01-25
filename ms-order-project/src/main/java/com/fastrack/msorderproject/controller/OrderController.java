@@ -35,7 +35,8 @@ public class OrderController implements OrdersApi{
 	@Override
 	@Transactional
 	public ResponseEntity<OrderDto> createUsingPOST(@Validated OrderDto body, UriComponentsBuilder uriBuilder) {
-		if(body.getDescription() == null || body.getName() == null || body.getTotal() == null || body.getStatus() == null) {
+		if(body.getDescription() == null || body.getName() == null || body.getTotal() == null || body.getStatus() == null
+				|| "".equals(body.getDescription().trim()) ||  "".equals(body.getName().trim()) || "".equals(body.getStatus().toString().trim())) {
 			throw new ValidatedParametersException(body,  Orders.class, "Order", null, null);
 		}
 		Orders order = new Orders(body.getDescription(), body.getId(), body.getName(), body.getTotal(), body.getStatus());
