@@ -105,12 +105,24 @@ public class OrderController implements OrdersApi{
 		Double maxTotalDouble = Double.MAX_VALUE;
 		Double minTotalDouble = 0.0;
 		
-		if(maxTotal != null) {
-			maxTotalDouble =  Double.parseDouble(maxTotal);
+		try {
+			if(maxTotal != null) {
+				maxTotalDouble =  Double.parseDouble(maxTotal);
+			}
+			
+		} catch (Exception e) {
+			throw new ValidatedParametersException(maxTotal, Double.class, "max_total", null, e.getCause());
 		}
-		if(minTotal != null) {
-			minTotalDouble =  Double.parseDouble(minTotal);
+
+		try {
+			if(minTotal != null) {
+				minTotalDouble =  Double.parseDouble(minTotal);
+			}
+			
+		} catch (Exception e) {
+			throw new ValidatedParametersException(minTotal,  Double.class, "min_total", null, e.getCause());
 		}
+
 		
 		List<Orders> orders = orderRepository.findAll(q, minTotalDouble, maxTotalDouble, status);
 		List<OrderDto> ordersDto = OrderDto.converter(orders);
