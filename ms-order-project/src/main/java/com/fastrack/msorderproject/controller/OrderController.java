@@ -36,9 +36,13 @@ public class OrderController implements OrdersApi{
 	@Transactional
 	public ResponseEntity<OrderDto> createUsingPOST(@Validated OrderDto body, UriComponentsBuilder uriBuilder) {
 		Orders order = new Orders(body.getDescription(), body.getId(), body.getName(), body.getTotal(), body.getStatus());
-		orderRepository.save(order);
-		
 		OrderDto orderDto = new OrderDto(order);
+		
+		try {
+			orderRepository.save(order);
+		} catch (Exception e) {
+			throw new ValidatedParametersException(body,  Double.class, "Order", null, e.getCause());
+		}
 		
 		orderProducer.send(orderDto);
 		

@@ -36,7 +36,6 @@ public class OrderDto   {
   private String name = null;
 
   @JsonProperty("total")
-  @NonNull
   private Double total = null;
 
   @JsonProperty("status")
