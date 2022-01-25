@@ -35,15 +35,14 @@ public class OrderController implements OrdersApi{
 	@Override
 	@Transactional
 	public ResponseEntity<OrderDto> createUsingPOST(@Validated OrderDto body, UriComponentsBuilder uriBuilder) {
+		if(body.getDescription() == null || body.getName() == null || body.getTotal() == null || body.getStatus() == null) {
+			throw new ValidatedParametersException(body,  Orders.class, "Order", null, null);
+		}
+		
 		Orders order = new Orders(body.getDescription(), body.getId(), body.getName(), body.getTotal(), body.getStatus());
 		OrderDto orderDto = new OrderDto(order);
 		
-		try {
-			orderRepository.save(order);
-		} catch (Exception e) {
-			throw new ValidatedParametersException(body,  Orders.class, "Order", null, e.getCause());
-		}
-		
+		orderRepository.save(order);
 		orderProducer.send(orderDto);
 		
 		URI uri = uriBuilder.path("/orders/{id}").buildAndExpand(order.getId()).toUri();

@@ -32,11 +32,12 @@ public class Orders{
 	private Long id;
 	@NotNull
 	private String name;
-	private double total;
+	@NotNull
+	private Double total;
 	@NotNull
 	private String description;
-	
 	@Enumerated(EnumType.STRING)
+	@NotNull
 	private StatusEnum status;
 	
 	
