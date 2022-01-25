@@ -18,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fastrack.msorderproject.dto.ExceptionResponse;
 import com.fastrack.msorderproject.dto.OrderDto;
+import com.fastrack.msorderproject.models.StatusEnum;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -92,7 +93,7 @@ public interface OrdersApi {
         method = RequestMethod.GET)
     ResponseEntity<List<OrderDto>> searchUsingGET(@ApiParam(value = "")  @RequestParam(value = "max_total", required = false) String maxTotal
 ,@ApiParam(value = "") @RequestParam(value = "min_total", required = false) String minTotal
-,@ApiParam(value = "") @RequestParam(value = "status", required = false) String status
+,@ApiParam(value = "") @RequestParam(value = "status", required = false) StatusEnum status
 ,@ApiParam(value = "") @RequestParam(value = "q", required = false) String q
 );
 

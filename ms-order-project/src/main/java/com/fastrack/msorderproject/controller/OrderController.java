@@ -15,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fastrack.msorderproject.api.OrdersApi;
 import com.fastrack.msorderproject.dto.OrderDto;
 import com.fastrack.msorderproject.models.Orders;
+import com.fastrack.msorderproject.models.StatusEnum;
 import com.fastrack.msorderproject.producer.OrderProducer;
 import com.fastrack.msorderproject.repository.OrderRepository;
 import com.fastrack.msorderproject.validation.ValidatedParametersException;
@@ -100,8 +101,18 @@ public class OrderController implements OrdersApi{
 	
 	@Override
 	public ResponseEntity<List<OrderDto>> searchUsingGET(String maxTotal, String minTotal,
-		 String status, String q)  throws ValidatedParametersException {
-		List<Orders> orders = orderRepository.findFilters(q, Double.parseDouble(minTotal), Double.parseDouble(maxTotal));
+			StatusEnum status, String q)  throws ValidatedParametersException {
+		Double maxTotalDouble = Double.MAX_VALUE;
+		Double minTotalDouble = 0.0;
+		
+		if(maxTotal != null) {
+			maxTotalDouble =  Double.parseDouble(maxTotal);
+		}
+		if(minTotal != null) {
+			minTotalDouble =  Double.parseDouble(minTotal);
+		}
+		
+		List<Orders> orders = orderRepository.findAll(q, minTotalDouble, maxTotalDouble, status);
 		List<OrderDto> ordersDto = OrderDto.converter(orders);
 		
 		return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(ordersDto);
