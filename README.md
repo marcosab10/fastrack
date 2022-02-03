@@ -23,4 +23,4 @@ O Desafio proposto é um [CRUD] de pedidos que fará interação com o Kafka par
 
 
 
-Documentação [Swagger]![Arquitetura.](/ms-order-consumer/src/main/resources/swagger.yaml) .
+Documentação [Swagger](/ms-order-consumer/src/main/resources/swagger.yaml).
