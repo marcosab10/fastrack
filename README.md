@@ -20,4 +20,7 @@ O Desafio proposto é um [CRUD] de pedidos que fará interação com o Kafka par
 
 ## Links
 
-Documentação [Swagger](https://github.com/wellington-aires-alves/fast-track-spring-boot/blob/main/swagger.yaml).
+
+
+
+Documentação [Swagger]![Arquitetura.](/ms-order-consumer/src/main/resources/swagger.yaml) .
