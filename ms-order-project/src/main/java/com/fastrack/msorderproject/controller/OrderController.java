@@ -16,8 +16,7 @@ import com.fastrack.msorderproject.api.OrdersApi;
 import com.fastrack.msorderproject.dto.OrderDto;
 import com.fastrack.msorderproject.models.Orders;
 import com.fastrack.msorderproject.models.StatusEnum;
-import com.fastrack.msorderproject.producer.OrderProducer;
-import com.fastrack.msorderproject.repository.OrderRepository;
+import com.fastrack.msorderproject.service.OrderService;
 import com.fastrack.msorderproject.validation.ValidatedParametersException;
 
 @RestController
@@ -27,34 +26,25 @@ public class OrderController implements OrdersApi{
 	private static final String APPLICATION_JSON = "application/json";
 	
 	@Autowired
-	private OrderRepository orderRepository;
-
-	@Autowired
-	private OrderProducer orderProducer;
+	private OrderService orderService;
 	
 	@Override
 	@Transactional
 	public ResponseEntity<OrderDto> createUsingPOST(@Validated OrderDto body, UriComponentsBuilder uriBuilder) {
-		if(body.getDescription() == null || body.getName() == null || body.getTotal() == null || body.getStatus() == null
-				|| "".equals(body.getDescription().trim()) ||  "".equals(body.getName().trim()) || "".equals(body.getStatus().toString().trim())) {
-			throw new ValidatedParametersException(body,  Orders.class, "Order", null, null);
-		}
-		Orders order = new Orders(body.getDescription(), body.getId(), body.getName(), body.getTotal(), body.getStatus());
-		orderRepository.save(order);
-
-		OrderDto orderDto = new OrderDto(order);
-		orderProducer.send(orderDto);
+		validateOrder(body);
 		
-		URI uri = uriBuilder.path("/orders/{id}").buildAndExpand(order.getId()).toUri();
+		OrderDto orderDto = orderService.createOrder(body);
+		
+		URI uri = uriBuilder.path("/orders/{id}").buildAndExpand(orderDto.getId()).toUri();
 		return ResponseEntity.created(uri).header(CONTENT_TYPE, APPLICATION_JSON).body(orderDto);
 	}
 
 	@Override
 	@Transactional
 	public ResponseEntity<OrderDto> deleteUsingDELETE(Long id, UriComponentsBuilder uriBuilder) {
-		Optional<Orders> order = orderRepository.findById(id);
+		Optional<Orders> order = orderService.findById(id);
 		if(order.isPresent()) {
-			orderRepository.delete(order.get());
+			orderService.deleteOrder(order);
 			OrderDto orderDto = new OrderDto(order.get());	
 			return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(orderDto);
 		}
@@ -66,7 +56,7 @@ public class OrderController implements OrdersApi{
 
 	@Override
 	public ResponseEntity<OrderDto> findByIdUsingGET(Long id) {
-		Optional<Orders> order = orderRepository.findById(id);
+		Optional<Orders> order = orderService.findById(id);
 		if(order.isPresent()) {
 			OrderDto orderDto = new OrderDto(order.get());	
 			return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(orderDto);
@@ -78,7 +68,7 @@ public class OrderController implements OrdersApi{
 
 	@Override
 	public ResponseEntity<List<OrderDto>> listUsingGET() {
-		List<Orders> orders =  orderRepository.findAll();
+		List<Orders> orders =  orderService.findAll();
 		List<OrderDto> ordersDto = OrderDto.converter(orders);
 		
 		return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(ordersDto);
@@ -87,7 +77,14 @@ public class OrderController implements OrdersApi{
 	@Override
 	@Transactional
 	public ResponseEntity<OrderDto> updateUsingPUT(@Validated OrderDto body, Long id) {		
-		Optional<Orders> order = orderRepository.findById(id);
+		
+		if(id == null || id < 1) {
+			throw new ValidatedParametersException(id,  Long.class, "id", null, null);
+		}
+		
+		validateOrder(body);
+		
+		Optional<Orders> order = orderService.findById(id);
 		if(order.isPresent()) {
 			order.get().setDescription(body.getDescription());
 			order.get().setName(body.getName());
@@ -99,6 +96,14 @@ public class OrderController implements OrdersApi{
 		}
 		else {
 			return ResponseEntity.notFound().build();
+		}
+	}
+
+	private void validateOrder(OrderDto body) {
+		if(body.getDescription() == null || body.getName() == null || body.getTotal() == null || body.getStatus() == null || body.getTotal() == null
+				|| "".equals(body.getDescription().trim()) ||  "".equals(body.getName().trim()) || "".equals(body.getStatus().toString().trim())
+				|| body.getTotal() == 0.0 || body.getTotal() < 0.0) {
+			throw new ValidatedParametersException(body,  Orders.class, "Order", null, null);
 		}
 	}
 	
@@ -127,7 +132,7 @@ public class OrderController implements OrdersApi{
 		}
 
 		
-		List<Orders> orders = orderRepository.findAll(q, minTotalDouble, maxTotalDouble, status);
+		List<Orders> orders = orderService.findAll(q, minTotalDouble, maxTotalDouble, status);
 		List<OrderDto> ordersDto = OrderDto.converter(orders);
 		
 		return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(ordersDto);

@@ -32,7 +32,7 @@ public class KafkaProducerConfig {
 	}
 	
 	@Bean
-	public ProducerFactory<String, OrderDto> OrderProducerFactory(){
+	public ProducerFactory<String, OrderDto> orderProducerFactory(){
 		
 		Map<String, Object> configProps = new HashMap<>();
 		configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
@@ -44,6 +44,6 @@ public class KafkaProducerConfig {
 	
 	@Bean
 	public KafkaTemplate<String, OrderDto> orderKafkaTemplate(){
-		return new KafkaTemplate<>(OrderProducerFactory());
+		return new KafkaTemplate<>(orderProducerFactory());
 	}
 }

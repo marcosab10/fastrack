@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -20,7 +22,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-@Api(value = "orders", description = "the orders API")
+@Api(value = "orders")
 public interface OrdersApi {
 
     @ApiOperation(value = "create", nickname = "createUsingPOST", notes = "", response = OrderDto.class, tags={ "order-rest", })
@@ -30,10 +32,10 @@ public interface OrdersApi {
         @ApiResponse(code = 401, message = "Unauthorized", response = ExceptionResponse.class),
         @ApiResponse(code = 403, message = "Forbidden", response = ExceptionResponse.class),
         @ApiResponse(code = 404, message = "Not Found", response = ExceptionResponse.class) })
-    @RequestMapping(value = "/orders",
+    
+    @PostMapping(value = "/orders",
         produces = { "*/*" }, 
-        consumes = { "application/json" },
-        method = RequestMethod.POST)
+        consumes = { "application/json" })
     ResponseEntity<OrderDto> createUsingPOST(@ApiParam(value = "dto" ,required=true )  @RequestBody @Validated OrderDto body, UriComponentsBuilder uriBuilder
 );
 
@@ -44,9 +46,8 @@ public interface OrdersApi {
         @ApiResponse(code = 204, message = "No Content", response = ExceptionResponse.class),
         @ApiResponse(code = 401, message = "Unauthorized", response = ExceptionResponse.class),
         @ApiResponse(code = 403, message = "Forbidden", response = ExceptionResponse.class) })
-    @RequestMapping(value = "/orders/{id}",
-        produces = { "*/*" }, 
-        method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/orders/{id}",
+        produces = { "*/*" })
     ResponseEntity<OrderDto> deleteUsingDELETE(@ApiParam(value = "id",required=true) @PathVariable("id") Long id, UriComponentsBuilder uriBuilder
 );
 
@@ -57,9 +58,8 @@ public interface OrdersApi {
         @ApiResponse(code = 401, message = "Unauthorized", response = ExceptionResponse.class),
         @ApiResponse(code = 403, message = "Forbidden", response = ExceptionResponse.class),
         @ApiResponse(code = 404, message = "Not Found", response = ExceptionResponse.class) })
-    @RequestMapping(value = "/orders/{id}",
-        produces = { "*/*" }, 
-        method = RequestMethod.GET)
+    @GetMapping(value = "/orders/{id}",
+        produces = { "*/*" })
     ResponseEntity<OrderDto> findByIdUsingGET(@ApiParam(value = "id",required=true) @PathVariable("id") Long id
 );
 
@@ -71,9 +71,8 @@ public interface OrdersApi {
         @ApiResponse(code = 401, message = "Unauthorized", response = ExceptionResponse.class),
         @ApiResponse(code = 403, message = "Forbidden", response = ExceptionResponse.class),
         @ApiResponse(code = 404, message = "Not Found", response = ExceptionResponse.class) })
-    @RequestMapping(value = "/orders",
-        produces = { "*/*" }, 
-        method = RequestMethod.GET)
+    @GetMapping(value = "/orders",
+        produces = { "*/*" })
     ResponseEntity<List<OrderDto>> listUsingGET();
 
 
@@ -83,9 +82,8 @@ public interface OrdersApi {
         @ApiResponse(code = 401, message = "Unauthorized", response = ExceptionResponse.class),
         @ApiResponse(code = 403, message = "Forbidden", response = ExceptionResponse.class),
         @ApiResponse(code = 404, message = "Not Found", response = ExceptionResponse.class) })
-    @RequestMapping(value = "/orders/search",
-        produces = { "*/*" }, 
-        method = RequestMethod.GET)
+    @GetMapping(value = "/orders/search",
+        produces = { "*/*" })
     ResponseEntity<List<OrderDto>> searchUsingGET(@ApiParam(value = "")  @RequestParam(value = "max_total", required = false) String maxTotal
 ,@ApiParam(value = "") @RequestParam(value = "min_total", required = false) String minTotal
 ,@ApiParam(value = "") @RequestParam(value = "status", required = false) StatusEnum status
@@ -101,10 +99,9 @@ public interface OrdersApi {
         @ApiResponse(code = 401, message = "Unauthorized", response = ExceptionResponse.class),
         @ApiResponse(code = 403, message = "Forbidden", response = ExceptionResponse.class),
         @ApiResponse(code = 404, message = "Not Found", response = ExceptionResponse.class) })
-    @RequestMapping(value = "/orders/{id}",
+    @PutMapping(value = "/orders/{id}",
         produces = { "*/*" }, 
-        consumes = { "application/json" },
-        method = RequestMethod.PUT)
+        consumes = { "application/json" })
     ResponseEntity<OrderDto> updateUsingPUT(@ApiParam(value = "dto" ,required=true )  @RequestBody @Validated OrderDto body
 ,@ApiParam(value = "id",required=true) @PathVariable("id") Long id
 );

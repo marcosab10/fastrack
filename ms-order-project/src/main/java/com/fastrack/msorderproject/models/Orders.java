@@ -41,7 +41,7 @@ public class Orders{
 	private StatusEnum status;
 	
 	
-	public Orders(String description, Long id, String name, double total, StatusEnum status) {
+	public Orders(String description, String name, double total, StatusEnum status) {
 		this.name = name;
 		this.total = total;
 		this.status = status;
