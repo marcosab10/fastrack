@@ -10,17 +10,26 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Build'
-                sh 'make clean'
+                dir("ms-order-project/") {
+                    sh 'mvn clean'
+                    sh 'mvn install -Dmaven.test.skip=true'
+                } 
             }
         }
         stage('Tests') {
             steps {
                 echo 'Tests'
+                 dir("ms-order-project/") {
+                    sh 'mvn test'
+                } 
             }
         }
         stage('Release') {
             steps {
                 echo 'Release'
+                 dir("ms-order-project/") {
+                    sh 'mvn package -Dmaven.test.skip=true'
+                } 
             }
         }
     }
