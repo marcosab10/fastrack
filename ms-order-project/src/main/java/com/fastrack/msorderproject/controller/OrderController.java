@@ -15,8 +15,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fastrack.msorderproject.api.OrdersApi;
 import com.fastrack.msorderproject.dto.OrderDto;
 import com.fastrack.msorderproject.models.Orders;
-import com.fastrack.msorderproject.producer.OrderProducer;
-import com.fastrack.msorderproject.repository.OrderRepository;
+import com.fastrack.msorderproject.models.StatusEnum;
+import com.fastrack.msorderproject.service.OrderService;
 import com.fastrack.msorderproject.validation.ValidatedParametersException;
 
 @RestController
@@ -26,31 +26,25 @@ public class OrderController implements OrdersApi{
 	private static final String APPLICATION_JSON = "application/json";
 	
 	@Autowired
-	private OrderRepository orderRepository;
-
-	@Autowired
-	private OrderProducer orderProducer;
+	private OrderService orderService;
 	
 	@Override
 	@Transactional
 	public ResponseEntity<OrderDto> createUsingPOST(@Validated OrderDto body, UriComponentsBuilder uriBuilder) {
-		Orders order = new Orders(body.getDescription(), body.getId(), body.getName(), body.getTotal(), body.getStatus());
-		orderRepository.save(order);
+		validateOrder(body);
 		
-		OrderDto orderDto = new OrderDto(order);
+		OrderDto orderDto = orderService.createOrder(body);
 		
-		orderProducer.send(orderDto);
-		
-		URI uri = uriBuilder.path("/orders/{id}").buildAndExpand(order.getId()).toUri();
+		URI uri = uriBuilder.path("/orders/{id}").buildAndExpand(orderDto.getId()).toUri();
 		return ResponseEntity.created(uri).header(CONTENT_TYPE, APPLICATION_JSON).body(orderDto);
 	}
 
 	@Override
 	@Transactional
 	public ResponseEntity<OrderDto> deleteUsingDELETE(Long id, UriComponentsBuilder uriBuilder) {
-		Optional<Orders> order = orderRepository.findById(id);
+		Optional<Orders> order = orderService.findById(id);
 		if(order.isPresent()) {
-			orderRepository.delete(order.get());
+			orderService.deleteOrder(order);
 			OrderDto orderDto = new OrderDto(order.get());	
 			return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(orderDto);
 		}
@@ -62,7 +56,7 @@ public class OrderController implements OrdersApi{
 
 	@Override
 	public ResponseEntity<OrderDto> findByIdUsingGET(Long id) {
-		Optional<Orders> order = orderRepository.findById(id);
+		Optional<Orders> order = orderService.findById(id);
 		if(order.isPresent()) {
 			OrderDto orderDto = new OrderDto(order.get());	
 			return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(orderDto);
@@ -74,7 +68,7 @@ public class OrderController implements OrdersApi{
 
 	@Override
 	public ResponseEntity<List<OrderDto>> listUsingGET() {
-		List<Orders> orders =  orderRepository.findAll();
+		List<Orders> orders =  orderService.findAll();
 		List<OrderDto> ordersDto = OrderDto.converter(orders);
 		
 		return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(ordersDto);
@@ -83,21 +77,20 @@ public class OrderController implements OrdersApi{
 	@Override
 	@Transactional
 	public ResponseEntity<OrderDto> updateUsingPUT(@Validated OrderDto body, Long id) {		
-		Optional<Orders> order = orderRepository.findById(id);
+		
+		if(id == null || id < 1) {
+			throw new ValidatedParametersException(id,  Long.class, "id", null, null);
+		}
+		
+		validateOrder(body);
+		
+		Optional<Orders> order = orderService.findById(id);
 		if(order.isPresent()) {
-			if(order.get().getDescription() != body.getDescription()) {
-				order.get().setDescription(body.getDescription());
-			}
-			if(order.get().getName() != body.getName()) {
-				order.get().setName(body.getName());
-			}
-			if(order.get().getTotal() != body.getTotal()) {
-				order.get().setTotal(body.getTotal());
-			}
-			if(order.get().getStatus().toString() != body.getStatus().toString()) {
-				order.get().setStatus(body.getStatus());
-			}
-			
+			order.get().setDescription(body.getDescription());
+			order.get().setName(body.getName());
+			order.get().setTotal(body.getTotal());
+			order.get().setStatus(body.getStatus());
+		
 			OrderDto orderDto = new OrderDto(order.get());
 			return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(orderDto);
 		}
@@ -105,11 +98,41 @@ public class OrderController implements OrdersApi{
 			return ResponseEntity.notFound().build();
 		}
 	}
+
+	private void validateOrder(OrderDto body) {
+		if(body.getDescription() == null || body.getName() == null || body.getTotal() == null || body.getStatus() == null || body.getTotal() == null
+				|| "".equals(body.getDescription().trim()) ||  "".equals(body.getName().trim()) || "".equals(body.getStatus().toString().trim())
+				|| body.getTotal() == 0.0 || body.getTotal() < 0.0) {
+			throw new ValidatedParametersException(body,  Orders.class, "Order", null, null);
+		}
+	}
 	
 	@Override
 	public ResponseEntity<List<OrderDto>> searchUsingGET(String maxTotal, String minTotal,
-		 String status, String q)  throws ValidatedParametersException {
-		List<Orders> orders = orderRepository.findFilters(q, Double.parseDouble(minTotal), Double.parseDouble(maxTotal));
+			StatusEnum status, String q)  throws ValidatedParametersException {
+		Double maxTotalDouble = Double.MAX_VALUE;
+		Double minTotalDouble = 0.0;
+		
+		try {
+			if(maxTotal != null) {
+				maxTotalDouble =  Double.parseDouble(maxTotal);
+			}
+			
+		} catch (Exception e) {
+			throw new ValidatedParametersException(maxTotal, Double.class, "max_total", null, e.getCause());
+		}
+
+		try {
+			if(minTotal != null) {
+				minTotalDouble =  Double.parseDouble(minTotal);
+			}
+			
+		} catch (Exception e) {
+			throw new ValidatedParametersException(minTotal,  Double.class, "min_total", null, e.getCause());
+		}
+
+		
+		List<Orders> orders = orderService.findAll(q, minTotalDouble, maxTotalDouble, status);
 		List<OrderDto> ordersDto = OrderDto.converter(orders);
 		
 		return ResponseEntity.ok().header(CONTENT_TYPE, APPLICATION_JSON).body(ordersDto);

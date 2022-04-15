@@ -6,13 +6,21 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+
+import org.springframework.validation.annotation.Validated;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @ToString
+@Getter
+@Setter
+@Validated
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
@@ -22,63 +30,23 @@ public class Orders{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@NotNull
 	private String name;
-	private double total;
+	@NotNull
+	private Double total;
+	@NotNull
 	private String description;
-	
 	@Enumerated(EnumType.STRING)
+	@NotNull
 	private StatusEnum status;
 	
-	public Orders() {
-	}
 	
-	public Orders(String description, Long id, String name, double total, StatusEnum status) {
+	public Orders(String description, String name, double total, StatusEnum status) {
 		this.name = name;
 		this.total = total;
 		this.status = status;
 		this.description = description;
 	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public double getTotal() {
-		return total;
-	}
-
-	public void setTotal(double total) {
-		this.total = total;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public StatusEnum getStatus() {
-		return status;
-	}
-
-	public void setStatus(StatusEnum status) {
-		this.status = status;
-	}
-	
 	
 	
 }

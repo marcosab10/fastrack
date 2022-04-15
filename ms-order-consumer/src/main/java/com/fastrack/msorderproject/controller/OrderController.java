@@ -1,6 +1,5 @@
 package com.fastrack.msorderproject.controller;
 
-import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -12,12 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fastrack.msorderproject.dto.OrderDto;
 import com.fastrack.msorderproject.models.Orders;
+import com.fastrack.msorderproject.models.StatusEnum;
 import com.fastrack.msorderproject.repository.OrderRepository;
 
 
@@ -45,28 +43,13 @@ private static final Logger log = LoggerFactory.getLogger(OrderController.class)
 		log.info("Received Message: " + record.value());
 		
 		OrderDto od = record.value();
-		String name = od.getName();
 		
-	
-		List<Orders> list = orderRepository.findByName(name);
-		
-		List<OrderDto> odt = OrderDto.converter(list);
-		
-		for (OrderDto ordem : odt) {
-			
-			//Atualizar
+		Optional<Orders> order = orderRepository.findById(od.getId());
+		if(order.isPresent()) {
+			order.get().setStatus(StatusEnum.PROCESSED);	
 		}
-	}
-	
-	public void atualizar(Long id,@RequestBody @Validated OrderDto orderDto ){
-		Optional<Orders> ordem =  orderRepository.findById(id);
-		if (ordem.isPresent()) {
-			
-			
-			//ordemForm.atualizar(id, orderRepository);
-			System.out.println("++++++++++++++++++++++ SUCESSO ++++++++++++++++++++++++");
-		}
-	
+		
+		System.out.println("++++++++++++++++++++++ SUCCESS ++++++++++++++++++++++++");
 	}
     
 }
