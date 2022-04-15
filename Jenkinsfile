@@ -10,8 +10,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Build'
-                cd ms-order-project/
-                mvn clean
+                make clean
             }
         }
         stage('Tests') {
